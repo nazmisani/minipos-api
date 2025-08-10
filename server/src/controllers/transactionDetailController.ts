@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-class CategoryController {
+class TransactionDetailController {
   static async register(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {
@@ -15,4 +15,4 @@ class CategoryController {
   }
 }
 
-export default CategoryController;
+export default TransactionDetailController;
