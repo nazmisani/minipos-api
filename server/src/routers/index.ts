@@ -3,8 +3,8 @@ import CategoryController from "../controllers/categoryController";
 import ProductController from "../controllers/productController";
 import TransactionController from "../controllers/transactionController";
 import TransactionDetailController from "../controllers/transactionDetailController";
+import express from "express";
 
-const express = require("express");
 const router = express.Router();
 
 router.post("/login", AuthController.login);
