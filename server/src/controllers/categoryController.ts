@@ -1,13 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 class CategoryController {
-  static async register(req: Request, res: Response, next: NextFunction) {
-    try {
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  static async login(req: Request, res: Response, next: NextFunction) {
+  static async addCategory(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {
       console.log(error);
