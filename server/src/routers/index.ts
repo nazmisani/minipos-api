@@ -1,8 +1,8 @@
 import AuthController from "../controllers/authController";
-import CategoryController from "../controllers/categoryController";
-import ProductController from "../controllers/productController";
-import TransactionController from "../controllers/transactionController";
-import TransactionDetailController from "../controllers/transactionDetailController";
+import productRouter from "./product";
+import categoryRouter from "./category";
+import transactionRouter from "./transaction";
+import transactionDetailRouter from "./transactionDetail";
 import express from "express";
 
 const router = express.Router();
@@ -10,12 +10,9 @@ const router = express.Router();
 router.post("/login", AuthController.login);
 router.post("/register", AuthController.register);
 
-router.post("/product", ProductController.addProduct);
-router.post("/category", CategoryController.addCategory);
-router.post("/transaction", TransactionController.addTransaction);
-router.post(
-  "/transaction_detail",
-  TransactionDetailController.addTransactionDetail
-);
+router.use("/product", productRouter);
+router.use("/category", categoryRouter);
+router.use("/transaction", transactionRouter);
+router.use("/transaction_detail", transactionDetailRouter);
 
 export default router;
