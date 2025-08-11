@@ -7,18 +7,74 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
+enum Role {
+  admin
+  cashier
+  manager
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  Int?
+model User {
+  id          Int          @id @default(autoincrement())
+  name        String
+  email       String       @unique
+  password    String
+  role        Role         @default(cashier)
+  createdAt   DateTime     @default(now())
+  transactions Transaction[]
+  logs        Log[]
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[]
+}
+
+model Product {
+  id          Int               @id @default(autoincrement())
+  name        String
+  price       Int
+  stock       Int
+  createdAt   DateTime          @default(now())
+  categoryId  Int
+  category    Category          @relation(fields: [categoryId], references: [id])
+  transactionDetails TransactionDetail[]
+}
+
+model Customer {
+  id          Int           @id @default(autoincrement())
+  name        String
+  phone       String?
+  email       String?
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          Int               @id @default(autoincrement())
+  total       Int
+  createdAt   DateTime          @default(now())
+  userId      Int
+  customerId  Int?
+  user        User              @relation(fields: [userId], references: [id])
+  customer    Customer?         @relation(fields: [customerId], references: [id])
+  details     TransactionDetail[]
+}
+
+model TransactionDetail {
+  id            Int         @id @default(autoincrement())
+  quantity      Int
+  subTotal      Int
+  transactionId Int
+  productId     Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  product       Product     @relation(fields: [productId], references: [id])
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  action    String
+  entity    String
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }
