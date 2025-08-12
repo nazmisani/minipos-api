@@ -1,11 +1,12 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../src/helpers/bcrypt";
 const prisma = new PrismaClient();
-import bcrypt from "bcryptjs";
+
 async function main() {
   // Hash passwords
-  const adminPass = await bcrypt.hash("123456", 10);
-  const cashierPass = await bcrypt.hash("123456", 10);
-  const managerPass = await bcrypt.hash("123456", 10);
+  const adminPass = hashPassword(process.env.ADMIN_PASSWORD ?? "password");
+  const cashierPass = hashPassword(process.env.CASHIER_PASSWORD ?? "password");
+  const managerPass = hashPassword(process.env.MANAGER_PASSWORD ?? "password");
 
   // Users
   await prisma.user.createMany({
