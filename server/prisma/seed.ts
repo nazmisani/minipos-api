@@ -3,28 +3,28 @@ const prisma = new PrismaClient();
 import bcrypt from "bcryptjs";
 async function main() {
   // Hash passwords
-  const adminPass = await bcrypt.hash("admin123", 10);
-  const cashierPass = await bcrypt.hash("cashier123", 10);
-  const managerPass = await bcrypt.hash("manager123", 10);
+  const adminPass = await bcrypt.hash("123456", 10);
+  const cashierPass = await bcrypt.hash("123456", 10);
+  const managerPass = await bcrypt.hash("123456", 10);
 
   // Users
   await prisma.user.createMany({
     data: [
       {
-        name: "Admin User",
-        email: "admin@example.com",
+        name: "Super Admin",
+        email: "superadmin@gmail.com",
         password: adminPass,
         role: "admin",
       },
       {
-        name: "Cashier One",
-        email: "cashier1@example.com",
+        name: "Cashier 1",
+        email: "cashier1@gmail.com",
         password: cashierPass,
         role: "cashier",
       },
       {
-        name: "Manager One",
-        email: "manager@example.com",
+        name: "Manager 1",
+        email: "manager1@gmail.com",
         password: managerPass,
         role: "manager",
       },
