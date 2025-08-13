@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { comparePassword, hashPassword } from "../helpers/bcrypt";
+import { signToken } from "../helpers/jwt";
 
 const prisma = new PrismaClient();
 
@@ -41,8 +42,36 @@ class AuthController {
   }
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
+      const { email, password } = req.body;
+
+      if (!email || !password) throw { name: "BadRequest" };
+
+      const user = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (!user) throw { name: "LoginErrorUser" };
+
+      if (!comparePassword(password, user.password)) {
+        throw { name: "LoginErrorPass" };
+      }
+
+      const payload = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      };
+
+      const token = signToken(payload);
+
+      res.status(201).json({
+        token: token,
+      });
     } catch (error) {
       console.log(error);
+      next(error);
     }
   }
 }
