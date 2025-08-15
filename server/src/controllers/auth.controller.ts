@@ -40,6 +40,18 @@ class AuthController {
       next(error);
     }
   }
+
+  static async getProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      res.status(200).json({
+        message: "User profile",
+        user: req.loginInfo,
+      });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
 }
 
 export default AuthController;
