@@ -34,6 +34,7 @@ const authentication = async (
       userId: user.id,
       email: user.email,
       name: user.name,
+      role: user.role,
     };
 
     next();

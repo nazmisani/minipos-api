@@ -6,7 +6,7 @@ import { signToken } from "../helpers/jwt";
 const prisma = new PrismaClient();
 
 class AuthController {
-  static async register(req: Request, res: Response, next: NextFunction) {
+  static async createUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, email, password } = req.body;
       if (!name || !email || !password) {
