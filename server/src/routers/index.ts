@@ -1,18 +1,18 @@
-import AuthController from "../controllers/authController";
-import productRouter from "./product";
-import categoryRouter from "./category";
-import transactionRouter from "./transaction";
-import transactionDetailRouter from "./transactionDetail";
+import AuthController from "../controllers/auth.controller";
+import productRouter from "./product.route";
+import transactionRouter from "./transaction.route";
+import userRouter from "./user.route";
+import logRouter from "./log.route";
 import express from "express";
 
 const router = express.Router();
 
-router.post("/login", AuthController.login);
-router.post("/register", AuthController.createUser);
+router.post("/auth/login", AuthController.login);
+router.post("auth/profile");
+router.use("./user", userRouter);
 
+router.use("./log", logRouter);
 router.use("/product", productRouter);
-router.use("/category", categoryRouter);
 router.use("/transaction", transactionRouter);
-router.use("/transaction_detail", transactionDetailRouter);
 
 export default router;
