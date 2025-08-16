@@ -40,6 +40,33 @@ class UserController {
       console.log(error);
     }
   }
+
+  static async getUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+        },
+      });
+
+      const formattedUsers = user.map((u) => ({
+        ...u,
+        createdAt: u.createdAt.toLocaleDateString("id-ID", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        }),
+      }));
+
+      res.status(200).json({ users: formattedUsers });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default UserController;

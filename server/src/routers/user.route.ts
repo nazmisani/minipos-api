@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.use(authorizeRole("admin"));
 
-// router.get("/");
+router.get("/", UserController.getUser);
 router.post("/", UserController.createUser);
 // router.put("/:id");
 // router.delete("/:id");

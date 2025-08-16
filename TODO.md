@@ -23,7 +23,7 @@ Gunakan checklist `[ ]` → `[x]` untuk menandai endpoint yang sudah selesai dii
 
 > CRUD untuk user (khusus role **Admin**).
 
-- [] **GET** `/users`  
+- [✅] **GET** `/users`  
    Lihat daftar semua user.  
    🔑 _Akses_: Admin
 
