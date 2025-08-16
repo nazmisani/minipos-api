@@ -1,4 +1,4 @@
-import router from "./routers";
+import router from "./routers/index.route";
 import express from "express";
 
 const app = express();
