@@ -14,10 +14,10 @@ router.post("/auth", AuthRouter);
 
 router.use(authentication);
 
-router.use("/user", UserRouter);
-router.use("/log", LogRouter);
-router.use("/product", ProductRouter);
-router.use("/transaction", TransactionRouter);
+router.use("/users", UserRouter);
+router.use("/logs", LogRouter);
+router.use("/products", ProductRouter);
+router.use("/transactions", TransactionRouter);
 
 router.use(errorHandler);
 
