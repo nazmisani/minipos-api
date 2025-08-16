@@ -75,26 +75,23 @@ class UserController {
       const { id } = req.params;
       const { name, email, role } = req.body;
 
-      if (!id || isNaN(Number(id))) {
-        throw { name: "BadRequest", message: "Invalid user ID" };
-      }
+      if (!id || isNaN(Number(id))) throw { name: "BadRequest" };
 
       const existingUser = await prisma.user.findUnique({
         where: { id: Number(id) },
       });
 
-      if (!existingUser) {
-        throw { name: "NotFound", message: "User not found" };
+      if (!existingUser) throw { name: "NotFound" };
+
+      if (existingUser.isSuperAdmin && role) {
+        throw { name: "Forbidden", message: "Cannot change superadmin role" };
       }
 
       if (email && email !== existingUser.email) {
         const emailExists = await prisma.user.findUnique({
-          where: { email: email },
+          where: { email },
         });
-
-        if (emailExists) {
-          throw { name: "Conflict", message: "Email already in use" };
-        }
+        if (emailExists) throw { name: "Conflict" };
       }
 
       const updatedUser = await prisma.user.update({
@@ -102,7 +99,8 @@ class UserController {
         data: {
           ...(name && { name }),
           ...(email && { email }),
-          ...(role && { role }),
+          ...(role &&
+            existingUser.email !== "superadmin@gmail.com" && { role }),
         },
         select: {
           id: true,
@@ -126,20 +124,20 @@ class UserController {
     try {
       const { id } = req.params;
 
-      if (!id || isNaN(Number(id))) {
-        throw { name: "BadRequest", message: "Invalid user ID" };
-      }
+      if (!id || isNaN(Number(id))) throw { name: "BadRequest" };
 
       const existingUser = await prisma.user.findUnique({
         where: { id: Number(id) },
       });
 
-      if (!existingUser) {
-        throw { name: "NotFound", message: "User not found" };
-      }
+      if (!existingUser) throw { name: "NotFound" };
 
       if (req.loginInfo && Number(id) === req.loginInfo.userId) {
         throw { name: "BadRequest", message: "Cannot delete your own account" };
+      }
+
+      if (existingUser.isSuperAdmin) {
+        throw { name: "Forbidden", message: "Cannot delete superadmin" };
       }
 
       await prisma.user.delete({
