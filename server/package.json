@@ -1,9 +1,7 @@
 {
-  "name": "hello-prisma",
+  "name": "minipos-api",
   "license": "MIT",
   "scripts": {
-    "queries": "ts-node ./src/queries.ts",
-    "caching": "ts-node ./src/caching.ts",
     "dev": "nodemon --exec ts-node src/server.ts"
   },
   "prisma": {

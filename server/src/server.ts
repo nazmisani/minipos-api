@@ -2,7 +2,7 @@ import router from "./routers/index.route";
 import express from "express";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 let cors = require("cors");
 
 app.use(cors("*"));
