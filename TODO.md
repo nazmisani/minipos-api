@@ -1,7 +1,7 @@
 # ✅ API Checklist
 
 Dokumentasi ini berisi daftar endpoint API beserta fungsinya.  
-Gunakan checklist `[ ]` → `[x]` untuk menandai endpoint yang sudah selesai diimplementasikan.
+Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai diimplementasikan.
 
 ---
 
@@ -31,13 +31,13 @@ Gunakan checklist `[ ]` → `[x]` untuk menandai endpoint yang sudah selesai dii
    Tambah user baru (role: admin, manager, cashier).  
    🔑 _Akses_: Admin
 
-- [ ] **PUT** `/users/:id`  
-       Edit data user (nama, email, role).  
-       🔑 _Akses_: Admin
+- [✅] **PUT** `/users/:id`  
+   Edit data user (nama, email, role).  
+   🔑 _Akses_: Admin
 
-- [ ] **DELETE** `/users/:id`  
-       Hapus user dari sistem.  
-       🔑 _Akses_: Admin
+- [✅] **DELETE** `/users/:id`  
+   Hapus user dari sistem.  
+   🔑 _Akses_: Admin
 
 ---
 

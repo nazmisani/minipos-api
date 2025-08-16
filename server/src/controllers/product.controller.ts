@@ -4,7 +4,7 @@ class ProductController {
   static async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 }

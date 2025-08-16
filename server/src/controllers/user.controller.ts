@@ -10,7 +10,7 @@ class UserController {
       const { name, email, role, password } = req.body;
 
       if (!name || !email || !role || !password) {
-        return res.status(400).json({ message: "All fields are required" });
+        throw { name: "BadRequest", message: "All fields are required" };
       }
 
       const existingEmail = await prisma.user.findUnique({
@@ -20,13 +20,13 @@ class UserController {
       });
 
       if (existingEmail) {
-        return res.status(409).json({ message: "Email already in use" });
+        throw { name: "Conflict", message: "Email already in use" };
       }
 
       const hashedPassword = hashPassword(password);
 
       const user = await prisma.user.create({
-        data: { name, email, password: hashedPassword },
+        data: { name, email, password: hashedPassword, role },
       });
 
       res.status(201).json({
@@ -34,10 +34,12 @@ class UserController {
         data: {
           id: user.id,
           name: user.name,
+          email: user.email,
+          role: user.role,
         },
       });
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 
@@ -63,6 +65,90 @@ class UserController {
       }));
 
       res.status(200).json({ users: formattedUsers });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { name, email, role } = req.body;
+
+      if (!id || isNaN(Number(id))) {
+        throw { name: "BadRequest", message: "Invalid user ID" };
+      }
+
+      const existingUser = await prisma.user.findUnique({
+        where: { id: Number(id) },
+      });
+
+      if (!existingUser) {
+        throw { name: "NotFound", message: "User not found" };
+      }
+
+      if (email && email !== existingUser.email) {
+        const emailExists = await prisma.user.findUnique({
+          where: { email: email },
+        });
+
+        if (emailExists) {
+          throw { name: "Conflict", message: "Email already in use" };
+        }
+      }
+
+      const updatedUser = await prisma.user.update({
+        where: { id: Number(id) },
+        data: {
+          ...(name && { name }),
+          ...(email && { email }),
+          ...(role && { role }),
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+        },
+      });
+
+      res.status(200).json({
+        message: "User updated successfully",
+        data: updatedUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async deleteUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      if (!id || isNaN(Number(id))) {
+        throw { name: "BadRequest", message: "Invalid user ID" };
+      }
+
+      const existingUser = await prisma.user.findUnique({
+        where: { id: Number(id) },
+      });
+
+      if (!existingUser) {
+        throw { name: "NotFound", message: "User not found" };
+      }
+
+      if (req.loginInfo && Number(id) === req.loginInfo.userId) {
+        throw { name: "BadRequest", message: "Cannot delete your own account" };
+      }
+
+      await prisma.user.delete({
+        where: { id: Number(id) },
+      });
+
+      res.status(200).json({
+        message: "User deleted successfully",
+      });
     } catch (error) {
       next(error);
     }

@@ -13,21 +13,24 @@ async function main() {
     data: [
       {
         name: "Super Admin",
-        email: "superadmin@gmail.com",
+        email: "superadmin@minipos.com",
         password: adminPass,
         role: "admin",
+        isSuperAdmin: true,
       },
       {
         name: "Cashier 1",
         email: "cashier1@gmail.com",
         password: cashierPass,
         role: "cashier",
+        isSuperAdmin: false,
       },
       {
         name: "Manager 1",
         email: "manager1@gmail.com",
         password: managerPass,
         role: "manager",
+        isSuperAdmin: false,
       },
     ],
   });
