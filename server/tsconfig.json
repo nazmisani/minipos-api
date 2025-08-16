@@ -3,7 +3,7 @@
     "target": "ES2020",
     "module": "CommonJS",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,6 +12,6 @@
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "types": ["node", "express"]
   },
-  "include": ["src", "src/types"],
+  "include": ["src", "src/types", "prisma"],
   "exclude": ["node_modules", "dist"]
 }
