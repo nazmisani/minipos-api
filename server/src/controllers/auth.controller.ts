@@ -48,7 +48,7 @@ class AuthController {
         user: req.loginInfo,
       });
     } catch (error) {
-      console.log(error);
+      console.log(">>>>>", error);
       next(error);
     }
   }
