@@ -35,6 +35,7 @@ const authentication = async (
       email: user.email,
       name: user.name,
       role: user.role,
+      isSuperAdmin: user.isSuperAdmin,
     };
 
     next();

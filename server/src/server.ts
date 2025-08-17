@@ -13,5 +13,7 @@ app.use(express.json());
 app.use(router);
 
 app.listen(port, () => {
-  console.log(`minipos app listening on port ${port}`);
+  console.log("🔥 SERVER STARTING...");
+  console.log(`🎉 Minipos app listening on port ${port}`);
+  console.log(`🌐 Server ready at: http://localhost:${port}`);
 });

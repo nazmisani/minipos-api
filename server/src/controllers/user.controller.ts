@@ -13,6 +13,24 @@ class UserController {
         throw { name: "BadRequest", message: "All fields are required" };
       }
 
+      if (!req.loginInfo || req.loginInfo.role !== "admin") {
+        throw {
+          name: "Forbidden",
+          message: "You are not allowed to create users",
+        };
+      }
+
+      if (
+        !req.loginInfo.isSuperAdmin &&
+        req.loginInfo.email !== "superadmin@minipos.com" &&
+        role === "admin"
+      ) {
+        throw {
+          name: "Forbidden",
+          message: "Only superadmin can create new admins",
+        };
+      }
+
       const existingEmail = await prisma.user.findUnique({
         where: {
           email: email,
@@ -30,7 +48,7 @@ class UserController {
       });
 
       res.status(201).json({
-        message: "register success",
+        message: "User created successfully",
         data: {
           id: user.id,
           name: user.name,
@@ -39,6 +57,8 @@ class UserController {
         },
       });
     } catch (error) {
+      console.log(error);
+
       next(error);
     }
   }
@@ -83,7 +103,11 @@ class UserController {
 
       if (!existingUser) throw { name: "NotFound" };
 
-      if (existingUser.isSuperAdmin && role) {
+      if (
+        (existingUser.isSuperAdmin ||
+          existingUser.email === "superadmin@minipos.com") &&
+        role
+      ) {
         throw { name: "Forbidden", message: "Cannot change superadmin role" };
       }
 
@@ -100,7 +124,8 @@ class UserController {
           ...(name && { name }),
           ...(email && { email }),
           ...(role &&
-            existingUser.email !== "superadmin@gmail.com" && { role }),
+            !existingUser.isSuperAdmin &&
+            existingUser.email !== "superadmin@minipos.com" && { role }),
         },
         select: {
           id: true,
@@ -136,7 +161,10 @@ class UserController {
         throw { name: "BadRequest", message: "Cannot delete your own account" };
       }
 
-      if (existingUser.isSuperAdmin) {
+      if (
+        existingUser.isSuperAdmin ||
+        existingUser.email === "superadmin@minipos.com"
+      ) {
         throw { name: "Forbidden", message: "Cannot delete superadmin" };
       }
 
