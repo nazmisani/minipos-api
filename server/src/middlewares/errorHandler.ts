@@ -31,12 +31,12 @@ const errorHandler = (
 
   if (error.name === "NotFound") {
     status = 404;
-    message = error.message || "Data not found";
+    message = "Data not found";
   }
 
   if (error.name === "Conflict") {
     status = 409;
-    message = error.message || "Data conflict";
+    message = "Data conflict";
   }
 
   res.status(status).json({
