@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-class ProductController {
+class logController {
   static async getLog(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {
@@ -9,4 +9,4 @@ class ProductController {
   }
 }
 
-export default ProductController;
+export default logController;
