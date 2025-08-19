@@ -46,21 +46,21 @@ Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai d
 
 > CRUD untuk produk (bisa diakses oleh Admin & Manager, dengan keterbatasan untuk Cashier).
 
-- [ ] **GET** `/products`  
-       Lihat daftar produk.  
-       🔑 _Akses_: Admin, Manager, Cashier
+- [✅] **GET** `/products`  
+   Lihat daftar produk.  
+   🔑 _Akses_: Admin, Manager, Cashier
 
-- [ ] **POST** `/products`  
-       Tambah produk baru.  
-       🔑 _Akses_: Admin, Manager
+- [✅] **POST** `/products`  
+   Tambah produk baru.  
+   🔑 _Akses_: Admin, Manager
 
-- [ ] **PUT** `/products/:id`  
-       Edit data produk.  
-       🔑 _Akses_: Admin, Manager
+- [✅] **PUT** `/products/:id`  
+   Edit data produk.  
+   🔑 _Akses_: Admin, Manager
 
-- [ ] **DELETE** `/products/:id`  
-       Hapus produk.  
-       🔑 _Akses_: Admin, Manager
+- [✅] **DELETE** `/products/:id`  
+   Hapus produk.  
+   🔑 _Akses_: Admin, Manager
 
 ---
 

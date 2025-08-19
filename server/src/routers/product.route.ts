@@ -1,9 +1,35 @@
 import express from "express";
+import ProductController from "../controllers/product.controller";
+import { authorizeRole } from "../middlewares/authorization";
+
 const router = express.Router();
 
-// router.get("/");
-// router.post("/");
-// router.get("/:id");
-// router.delete("/:id");
+// GET /products - Akses: Admin, Manager, Cashier
+router.get(
+  "/",
+  authorizeRole("admin", "manager", "cashier"),
+  ProductController.getProduct
+);
+
+// POST /products - Akses: Admin, Manager
+router.post(
+  "/",
+  authorizeRole("admin", "manager"),
+  ProductController.createProduct
+);
+
+// PUT /products/:id - Akses: Admin, Manager
+router.put(
+  "/:id",
+  authorizeRole("admin", "manager"),
+  ProductController.editProduct
+);
+
+// DELETE /products/:id - Akses: Admin, Manager
+router.delete(
+  "/:id",
+  authorizeRole("admin", "manager"),
+  ProductController.deleteProduct
+);
 
 export default router;
