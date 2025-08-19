@@ -68,21 +68,21 @@ Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai d
 
 > Mengelola kategori produk.
 
-- [ ] **GET** `/categories`  
-       Lihat daftar kategori produk.  
-       🔑 _Akses_: Admin, Manager, Cashier
+- [✅] **GET** `/categories`  
+   Lihat daftar kategori produk.  
+   🔑 _Akses_: Admin, Manager, Cashier
 
-- [ ] **POST** `/categories`  
-       Tambah kategori baru.  
-       🔑 _Akses_: Admin, Manager
+- [✅] **POST** `/categories`  
+   Tambah kategori baru.  
+   🔑 _Akses_: Admin, Manager
 
-- [ ] **PUT** `/categories/:id`  
-       Edit kategori.  
-       🔑 _Akses_: Admin, Manager
+- [✅] **PUT** `/categories/:id`  
+   Edit kategori.  
+   🔑 _Akses_: Admin, Manager
 
-- [ ] **DELETE** `/categories/:id`  
-       Hapus kategori.  
-       🔑 _Akses_: Admin
+- [✅] **DELETE** `/categories/:id`  
+   Hapus kategori.  
+   🔑 _Akses_: Admin
 
 ---
 

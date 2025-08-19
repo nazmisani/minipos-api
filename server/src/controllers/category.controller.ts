@@ -1,12 +1,178 @@
 import { NextFunction, Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
 
-class categoryController {
-  static async getLog(req: Request, res: Response, next: NextFunction) {
+const prisma = new PrismaClient();
+
+class CategoryController {
+  static async getCategory(req: Request, res: Response, next: NextFunction) {
     try {
+      const categories = await prisma.category.findMany({
+        include: {
+          products: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              stock: true,
+            },
+          },
+          _count: {
+            select: {
+              products: true,
+            },
+          },
+        },
+        orderBy: {
+          name: "asc",
+        },
+      });
+
+      res.status(200).json({
+        message: "Categories retrieved successfully",
+        data: categories,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async createCategory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { name } = req.body;
+
+      if (!name || name.trim() === "") {
+        throw { name: "BadRequest", message: "Category name is required" };
+      }
+
+      const existingCategory = await prisma.category.findUnique({
+        where: { name: name.trim() },
+      });
+
+      if (existingCategory) {
+        throw { name: "Conflict", message: "Category name already exists" };
+      }
+
+      const category = await prisma.category.create({
+        data: {
+          name: name.trim(),
+        },
+        include: {
+          _count: {
+            select: {
+              products: true,
+            },
+          },
+        },
+      });
+
+      res.status(201).json({
+        message: "Category created successfully",
+        data: category,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async editCategory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { name } = req.body;
+
+      if (!id || isNaN(Number(id))) {
+        throw { name: "BadRequest", message: "Invalid category ID" };
+      }
+
+      if (!name || name.trim() === "") {
+        throw { name: "BadRequest", message: "Category name is required" };
+      }
+
+      const existingCategory = await prisma.category.findUnique({
+        where: { id: Number(id) },
+      });
+
+      if (!existingCategory) {
+        throw { name: "NotFound", message: "Category not found" };
+      }
+
+      // Check if new name already exists (excluding current category)
+      const nameExists = await prisma.category.findFirst({
+        where: {
+          name: name.trim(),
+          NOT: { id: Number(id) },
+        },
+      });
+
+      if (nameExists) {
+        throw { name: "Conflict", message: "Category name already exists" };
+      }
+
+      const updatedCategory = await prisma.category.update({
+        where: { id: Number(id) },
+        data: {
+          name: name.trim(),
+        },
+        include: {
+          _count: {
+            select: {
+              products: true,
+            },
+          },
+        },
+      });
+
+      res.status(200).json({
+        message: "Category updated successfully",
+        data: updatedCategory,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async deleteCategory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      if (!id || isNaN(Number(id))) {
+        throw { name: "BadRequest", message: "Invalid category ID" };
+      }
+
+      const existingCategory = await prisma.category.findUnique({
+        where: { id: Number(id) },
+        include: {
+          _count: {
+            select: {
+              products: true,
+            },
+          },
+        },
+      });
+
+      if (!existingCategory) {
+        throw { name: "NotFound", message: "Category not found" };
+      }
+
+      // Check if category has products
+      if (existingCategory._count.products > 0) {
+        throw {
+          name: "Conflict",
+          message:
+            "Cannot delete category that has products. Please reassign or delete products first.",
+        };
+      }
+
+      await prisma.category.delete({
+        where: { id: Number(id) },
+      });
+
+      res.status(200).json({
+        message: "Category deleted successfully",
+      });
     } catch (error) {
       next(error);
     }
   }
 }
 
-export default categoryController;
+export default CategoryController;
