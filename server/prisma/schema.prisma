@@ -14,15 +14,16 @@ enum Role {
 }
 
 model User {
-  id          Int          @id @default(autoincrement())
-  name        String
-  email       String       @unique
-  password    String
-  role        Role         @default(cashier)
-  isSuperAdmin Boolean     @default(false)
-  createdAt   DateTime     @default(now())
-  transactions Transaction[]
-  logs        Log[]
+  id             Int          @id @default(autoincrement())
+  name           String
+  email          String       @unique
+  password       String
+  role           Role         @default(cashier)
+  isSuperAdmin   Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  transactions   Transaction[]
+  logs           Log[]
+  productsCreated Product[]   @relation("UserCreatedProducts")
 }
 
 model Category {
@@ -32,22 +33,24 @@ model Category {
 }
 
 model Product {
-  id          Int               @id @default(autoincrement())
-  name        String
-  price       Int
-  stock       Int
-  createdAt   DateTime          @default(now())
-  categoryId  Int
-  category    Category          @relation(fields: [categoryId], references: [id])
-  transactionDetails TransactionDetail[]
+  id                  Int                 @id @default(autoincrement())
+  name                String
+  price               Int
+  stock               Int
+  createdAt           DateTime            @default(now())
+  categoryId          Int
+  category            Category            @relation(fields: [categoryId], references: [id])
+  transactionDetails  TransactionDetail[]
+  createdById         Int?
+  createdBy           User?               @relation("UserCreatedProducts", fields: [createdById], references: [id], onDelete: SetNull)
 }
 
 model Customer {
-  id          Int           @id @default(autoincrement())
-  name        String
-  phone       String?
-  email       String?
-  transactions Transaction[]
+  id            Int           @id @default(autoincrement())
+  name          String
+  phone         String?
+  email         String?
+  transactions  Transaction[]
 }
 
 model Transaction {

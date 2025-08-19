@@ -40,12 +40,30 @@ async function main() {
     data: [{ name: "Beverages" }, { name: "Snacks" }, { name: "Electronics" }],
   });
 
-  // Products
+  // Products → tambahin createdById (Super Admin = userId: 1)
   await prisma.product.createMany({
     data: [
-      { name: "Coca Cola", price: 10000, stock: 50, categoryId: 1 },
-      { name: "Potato Chips", price: 15000, stock: 40, categoryId: 2 },
-      { name: "Bluetooth Speaker", price: 250000, stock: 20, categoryId: 3 },
+      {
+        name: "Coca Cola",
+        price: 10000,
+        stock: 50,
+        categoryId: 1,
+        createdById: 1,
+      },
+      {
+        name: "Potato Chips",
+        price: 15000,
+        stock: 40,
+        categoryId: 2,
+        createdById: 1,
+      },
+      {
+        name: "Bluetooth Speaker",
+        price: 250000,
+        stock: 20,
+        categoryId: 3,
+        createdById: 1,
+      },
     ],
   });
 

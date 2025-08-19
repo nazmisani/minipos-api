@@ -4,7 +4,7 @@ class ProductController {
   static async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.loginInfo?.userId;
-      console.log(userId);
+      const { name, price, stock, categoryid } = req.body;
     } catch (error) {
       next(error);
     }
