@@ -86,6 +86,32 @@ Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai d
 
 ---
 
+## 📌 4.5. Customer Management
+
+> Mengelola data customer untuk transaksi.
+
+- [✅] **GET** `/customers`  
+   Lihat daftar customer.  
+   🔑 _Akses_: Admin, Manager, Cashier
+
+- [✅] **GET** `/customers/:id`  
+   Lihat detail customer dan riwayat transaksi.  
+   🔑 _Akses_: Admin, Manager, Cashier
+
+- [✅] **POST** `/customers`  
+   Tambah customer baru.  
+   🔑 _Akses_: Admin, Manager, Cashier
+
+- [✅] **PUT** `/customers/:id`  
+   Edit data customer.  
+   🔑 _Akses_: Admin, Manager
+
+- [✅] **DELETE** `/customers/:id`  
+   Hapus customer.  
+   🔑 _Akses_: Admin
+
+---
+
 ## 📌 5. Transaction Management
 
 > Manajemen transaksi penjualan.

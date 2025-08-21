@@ -19,8 +19,8 @@ router.use(authentication);
 
 router.use("/users", userRouter);
 router.use("/products", ProductRouter);
-router.use("/customer", customerRoter);
-router.use("/category", categoryRouter);
+router.use("/customers", customerRoter);
+router.use("/categories", categoryRouter);
 router.use("/transactions", transactionRouter);
 router.use("/logs", logRouter);
 router.use("/reports", reportRouter);
