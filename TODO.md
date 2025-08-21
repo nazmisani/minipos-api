@@ -151,7 +151,3 @@ Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai d
 - [ ] **GET** `/reports/products/top`  
        Produk terlaris.  
        🔑 _Akses_: Admin, Manager
-
-- [ ] **GET** `/reports/cashier/performance`  
-       Performance kasir (jumlah transaksi & total penjualan).  
-       🔑 _Akses_: Admin, Manager

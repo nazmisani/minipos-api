@@ -95,7 +95,6 @@ class CategoryController {
         throw { name: "NotFound", message: "Category not found" };
       }
 
-      // Check if new name already exists (excluding current category)
       const nameExists = await prisma.category.findFirst({
         where: {
           name: name.trim(),
