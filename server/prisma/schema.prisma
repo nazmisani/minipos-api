@@ -46,12 +46,12 @@ model Product {
 }
 
 model Customer {
-  id            Int           @id @default(autoincrement())
-  name          String
-  phone         String?
-  email         String?
-  transactions  Transaction[]
+  id          Int           @id @default(autoincrement())
+  name        String
+  phone       String?
+  transactions Transaction[]
 }
+
 
 model Transaction {
   id          Int               @id @default(autoincrement())

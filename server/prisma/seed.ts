@@ -70,8 +70,8 @@ async function main() {
   // Customers
   await prisma.customer.createMany({
     data: [
-      { name: "John Doe", phone: "08123456789", email: "john@example.com" },
-      { name: "Jane Smith", phone: "08234567890", email: "jane@example.com" },
+      { name: "John Doe", phone: "08123456789" },
+      { name: "Jane Smith", phone: "08234567890" },
     ],
   });
 

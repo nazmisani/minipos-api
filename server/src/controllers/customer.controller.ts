@@ -53,37 +53,18 @@ class CustomerController {
 
   static async createCustomer(req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, phone, email } = req.body;
+      const { name, phone } = req.body;
 
       if (!name || name.trim() === "") {
         throw { name: "BadRequest", message: "Customer name is required" };
       }
 
-      // Email validation if provided
-      if (email && email.trim() !== "") {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email.trim())) {
-          throw { name: "BadRequest", message: "Invalid email format" };
-        }
-
-        // Check email uniqueness
-        const existingEmailCustomer = await prisma.customer.findFirst({
-          where: { email: email.trim() },
-        });
-
-        if (existingEmailCustomer) {
-          throw { name: "Conflict", message: "Email already exists" };
-        }
-      }
-
-      // Phone validation if provided
       if (phone && phone.trim() !== "") {
         const phoneRegex = /^(\+62|62|0)[0-9]{8,12}$/;
         if (!phoneRegex.test(phone.trim().replace(/[\s-]/g, ""))) {
           throw { name: "BadRequest", message: "Invalid phone number format" };
         }
 
-        // Check phone uniqueness
         const existingPhoneCustomer = await prisma.customer.findFirst({
           where: { phone: phone.trim() },
         });
@@ -97,7 +78,6 @@ class CustomerController {
         data: {
           name: name.trim(),
           phone: phone && phone.trim() !== "" ? phone.trim() : null,
-          email: email && email.trim() !== "" ? email.trim() : null,
         },
         include: {
           _count: {
@@ -120,7 +100,7 @@ class CustomerController {
   static async editCustomer(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const { name, phone, email } = req.body;
+      const { name, phone } = req.body;
 
       if (!id || isNaN(Number(id))) {
         throw { name: "BadRequest", message: "Invalid customer ID" };
@@ -138,34 +118,12 @@ class CustomerController {
         throw { name: "BadRequest", message: "Customer name is required" };
       }
 
-      // Email validation if provided
-      if (email !== undefined && email.trim() !== "") {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email.trim())) {
-          throw { name: "BadRequest", message: "Invalid email format" };
-        }
-
-        // Check email uniqueness (exclude current customer)
-        const existingEmailCustomer = await prisma.customer.findFirst({
-          where: {
-            email: email.trim(),
-            NOT: { id: Number(id) },
-          },
-        });
-
-        if (existingEmailCustomer) {
-          throw { name: "Conflict", message: "Email already exists" };
-        }
-      }
-
-      // Phone validation if provided
       if (phone !== undefined && phone.trim() !== "") {
         const phoneRegex = /^(\+62|62|0)[0-9]{8,12}$/;
         if (!phoneRegex.test(phone.trim().replace(/[\s-]/g, ""))) {
           throw { name: "BadRequest", message: "Invalid phone number format" };
         }
 
-        // Check phone uniqueness (exclude current customer)
         const existingPhoneCustomer = await prisma.customer.findFirst({
           where: {
             phone: phone.trim(),
@@ -184,9 +142,6 @@ class CustomerController {
           ...(name !== undefined && { name: name.trim() }),
           ...(phone !== undefined && {
             phone: phone.trim() !== "" ? phone.trim() : null,
-          }),
-          ...(email !== undefined && {
-            email: email.trim() !== "" ? email.trim() : null,
           }),
         },
         include: {
@@ -230,7 +185,6 @@ class CustomerController {
         throw { name: "NotFound", message: "Customer not found" };
       }
 
-      // Check if customer has transactions
       if (existingCustomer._count.transactions > 0) {
         throw {
           name: "Conflict",
