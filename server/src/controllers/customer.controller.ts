@@ -17,7 +17,7 @@ class CustomerController {
             orderBy: {
               createdAt: "desc",
             },
-            take: 5, // Latest 5 transactions
+            take: 5,
           },
           _count: {
             select: {
@@ -76,7 +76,7 @@ class CustomerController {
 
       const customer = await prisma.customer.create({
         data: {
-          name: name.trim(),
+          name: name,
           phone: phone && phone.trim() !== "" ? phone.trim() : null,
         },
         include: {
