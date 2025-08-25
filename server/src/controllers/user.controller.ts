@@ -47,6 +47,14 @@ class UserController {
         data: { name, email, password: hashedPassword, role },
       });
 
+      await prisma.log.create({
+        data: {
+          action: "CREATE_USER",
+          entity: "user",
+          userId: req.loginInfo.userId,
+        },
+      });
+
       res.status(201).json({
         message: "User created successfully",
         data: {
@@ -94,6 +102,10 @@ class UserController {
       const { id } = req.params;
       const { name, email, role } = req.body;
 
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
+      }
+
       if (!id || isNaN(Number(id))) throw { name: "BadRequest" };
 
       const existingUser = await prisma.user.findUnique({
@@ -135,6 +147,14 @@ class UserController {
         },
       });
 
+      await prisma.log.create({
+        data: {
+          action: "UPDATE_USER",
+          entity: "user",
+          userId: req.loginInfo.userId,
+        },
+      });
+
       res.status(200).json({
         message: "User updated successfully",
         data: updatedUser,
@@ -147,6 +167,10 @@ class UserController {
   static async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
+
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
+      }
 
       if (!id || isNaN(Number(id))) throw { name: "BadRequest" };
 
@@ -169,6 +193,14 @@ class UserController {
 
       await prisma.user.delete({
         where: { id: Number(id) },
+      });
+
+      await prisma.log.create({
+        data: {
+          action: "DELETE_USER",
+          entity: "user",
+          userId: req.loginInfo.userId,
+        },
       });
 
       res.status(200).json({

@@ -12,6 +12,10 @@ class ProductController {
         throw { name: "BadRequest", message: "All fields are required" };
       }
 
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
+      }
+
       if (price <= 0 || stock < 0) {
         throw {
           name: "BadRequest",
@@ -52,6 +56,14 @@ class ProductController {
               email: true,
             },
           },
+        },
+      });
+
+      await prisma.log.create({
+        data: {
+          action: "CREATE_PRODUCT",
+          entity: "product",
+          userId: req.loginInfo.userId,
         },
       });
 
@@ -104,6 +116,10 @@ class ProductController {
     try {
       const { id } = req.params;
       const { name, price, stock, categoryId } = req.body;
+
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
+      }
 
       if (!id || isNaN(Number(id))) {
         throw { name: "BadRequest", message: "Invalid product ID" };
@@ -168,6 +184,14 @@ class ProductController {
         },
       });
 
+      await prisma.log.create({
+        data: {
+          action: "UPDATE_PRODUCT",
+          entity: "product",
+          userId: req.loginInfo.userId,
+        },
+      });
+
       res.status(200).json({
         message: "Product updated successfully",
         data: updatedProduct,
@@ -180,6 +204,10 @@ class ProductController {
   static async deleteProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
+
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
+      }
 
       if (!id || isNaN(Number(id))) {
         throw { name: "BadRequest", message: "Invalid product ID" };
@@ -207,6 +235,14 @@ class ProductController {
 
       await prisma.product.delete({
         where: { id: Number(id) },
+      });
+
+      await prisma.log.create({
+        data: {
+          action: "DELETE_PRODUCT",
+          entity: "product",
+          userId: req.loginInfo.userId,
+        },
       });
 
       res.status(200).json({
