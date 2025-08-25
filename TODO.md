@@ -138,9 +138,9 @@ Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai d
 
 > Menyimpan & melihat aktivitas user dalam sistem.
 
-- [ ] **GET** `/logs`  
-       Lihat log aktivitas user (audit trail).  
-       🔑 _Akses_: Admin
+- [✅] **GET** `/logs`  
+   Lihat log aktivitas user (audit trail).  
+   🔑 _Akses_: Admin
 
 ---
 
