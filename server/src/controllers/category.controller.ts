@@ -44,6 +44,10 @@ class CategoryController {
         throw { name: "BadRequest", message: "Category name is required" };
       }
 
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
+      }
+
       const existingCategory = await prisma.category.findUnique({
         where: { name: name.trim() },
       });
@@ -69,6 +73,14 @@ class CategoryController {
         message: "Category created successfully",
         data: category,
       });
+
+      await prisma.log.create({
+        data: {
+          action: "CREATE_CATEGORY",
+          entity: "category",
+          userId: req.loginInfo.userId,
+        },
+      });
     } catch (error) {
       console.log(error);
 
@@ -80,6 +92,10 @@ class CategoryController {
     try {
       const { id } = req.params;
       const { name } = req.body;
+
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
+      }
 
       if (!id || isNaN(Number(id))) {
         throw { name: "BadRequest", message: "Invalid category ID" };
@@ -126,6 +142,14 @@ class CategoryController {
         message: "Category updated successfully",
         data: updatedCategory,
       });
+
+      await prisma.log.create({
+        data: {
+          action: "UPDATE_CATEGORY",
+          entity: "category",
+          userId: req.loginInfo.userId,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -137,6 +161,10 @@ class CategoryController {
 
       if (!id || isNaN(Number(id))) {
         throw { name: "BadRequest", message: "Invalid category ID" };
+      }
+
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
       }
 
       const existingCategory = await prisma.category.findUnique({
@@ -169,6 +197,14 @@ class CategoryController {
 
       res.status(200).json({
         message: "Category deleted successfully",
+      });
+
+      await prisma.log.create({
+        data: {
+          action: "DELETE_CATEGORY",
+          entity: "category",
+          userId: req.loginInfo.userId,
+        },
       });
     } catch (error) {
       next(error);

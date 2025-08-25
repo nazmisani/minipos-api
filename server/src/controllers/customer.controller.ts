@@ -55,6 +55,10 @@ class CustomerController {
     try {
       const { name, phone } = req.body;
 
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
+      }
+
       if (!name || name.trim() === "") {
         throw { name: "BadRequest", message: "Customer name is required" };
       }
@@ -92,6 +96,14 @@ class CustomerController {
         message: "Customer created successfully",
         data: customer,
       });
+
+      await prisma.log.create({
+        data: {
+          action: "CREATE_CUSTOMER",
+          entity: "customer",
+          userId: req.loginInfo.userId,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -101,6 +113,10 @@ class CustomerController {
     try {
       const { id } = req.params;
       const { name, phone } = req.body;
+
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
+      }
 
       if (!id || isNaN(Number(id))) {
         throw { name: "BadRequest", message: "Invalid customer ID" };
@@ -157,6 +173,14 @@ class CustomerController {
         message: "Customer updated successfully",
         data: updatedCustomer,
       });
+
+      await prisma.log.create({
+        data: {
+          action: "UPDATE_CUSTOMER",
+          entity: "customer",
+          userId: req.loginInfo.userId,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -165,6 +189,10 @@ class CustomerController {
   static async deleteCustomer(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
+
+      if (!req.loginInfo?.userId) {
+        throw { name: "Unauthorized", message: "User must be logged in" };
+      }
 
       if (!id || isNaN(Number(id))) {
         throw { name: "BadRequest", message: "Invalid customer ID" };
@@ -199,6 +227,14 @@ class CustomerController {
 
       res.status(200).json({
         message: "Customer deleted successfully",
+      });
+
+      await prisma.log.create({
+        data: {
+          action: "DELETE_CUSTOMER",
+          entity: "customer",
+          userId: req.loginInfo.userId,
+        },
       });
     } catch (error) {
       next(error);
