@@ -148,10 +148,10 @@ Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai d
 
 > Menampilkan data dalam bentuk laporan & grafik (buat dashboard).
 
-- [ ] **GET** `/reports/sales`  
-       Laporan penjualan (total per hari/bulan).  
-       🔑 _Akses_: Admin, Manager
+- [✅] **GET** `/reports/sales`  
+   Laporan penjualan (total per hari/bulan).  
+   🔑 _Akses_: Admin, Manager
 
-- [ ] **GET** `/reports/products/top`  
-       Produk terlaris.  
-       🔑 _Akses_: Admin, Manager
+- [✅] **GET** `/reports/products/top`  
+   Produk terlaris.  
+   🔑 _Akses_: Admin, Manager
