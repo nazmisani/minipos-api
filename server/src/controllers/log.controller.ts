@@ -1,12 +1,23 @@
 import { NextFunction, Request, Response } from "express";
 
-class logController {
-  static async getLog(req: Request, res: Response, next: NextFunction) {
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+class LogController {
+  static async getLogs(req: Request, res: Response, next: NextFunction) {
     try {
+      const logs = await prisma.log.findMany({
+        include: {
+          user: { select: { id: true, name: true, email: true, role: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      res.json({ message: "success", data: logs });
     } catch (error) {
       next(error);
     }
   }
 }
 
-export default logController;
+export default LogController;

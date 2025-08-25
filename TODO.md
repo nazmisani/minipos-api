@@ -116,21 +116,21 @@ Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai d
 
 > Manajemen transaksi penjualan.
 
-- [ ] **GET** `/transactions`  
-       Lihat semua transaksi yang tercatat.  
-       🔑 _Akses_: Admin, Manager
+- [✅] **GET** `/transactions`  
+   Lihat semua transaksi yang tercatat.  
+   🔑 _Akses_: Admin, Manager
 
-- [ ] **POST** `/transactions`  
-       Buat transaksi baru (misalnya saat kasir input penjualan).  
-       🔑 _Akses_: Cashier, Admin
+- [✅] **POST** `/transactions`  
+   Buat transaksi baru (misalnya saat kasir input penjualan).  
+   🔑 _Akses_: Cashier, Admin
 
-- [ ] **GET** `/transactions/:id`  
-       Lihat detail transaksi tertentu.  
-       🔑 _Akses_: Admin, Manager, Cashier
+- [✅] **GET** `/transactions/:id`  
+   Lihat detail transaksi tertentu.  
+   🔑 _Akses_: Admin, Manager, Cashier
 
-- [ ] **DELETE** `/transactions/:id`  
-       Hapus transaksi dari sistem.  
-       🔑 _Akses_: Admin
+- [✅] **DELETE** `/transactions/:id`  
+   Hapus transaksi dari sistem.  
+   🔑 _Akses_: Admin
 
 ---
 
