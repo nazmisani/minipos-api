@@ -13,7 +13,7 @@ class LogController {
         },
         orderBy: { createdAt: "desc" },
       });
-      res.json({ message: "success", data: logs });
+      res.status(200).json({ message: "success", data: logs });
     } catch (error) {
       next(error);
     }
