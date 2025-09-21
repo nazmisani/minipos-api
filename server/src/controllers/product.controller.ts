@@ -252,6 +252,29 @@ class ProductController {
       next(error);
     }
   }
+
+  static async totalProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const totalProducts = await prisma.product.count();
+      const totalValue = await prisma.product.aggregate({
+        _sum: {
+          price: true,
+          stock: true,
+        },
+      });
+
+      res.status(200).json({
+        message: "Product statistics retrieved successfully",
+        data: {
+          totalProducts,
+          totalValue: totalValue._sum.price || 0,
+          totalStock: totalValue._sum.stock || 0,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default ProductController;

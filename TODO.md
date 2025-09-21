@@ -10,7 +10,7 @@ Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai d
 > Endpoint untuk autentikasi user (login & ambil profil).
 
 - [✅] **POST** `/auth/login`  
-   Login user dengan email & password → return JWT token.  
+   Login user dengan email & password → return JWT token.         
    🔑 _Akses_: Semua user terdaftar
 
 - [✅] **GET** `/auth/profile`  
@@ -120,7 +120,7 @@ Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai d
    Lihat semua transaksi yang tercatat.  
    🔑 _Akses_: Admin, Manager
 
-- [✅] **POST** `/transactions`  
+- [✅] **POST** `/atransactions`  
    Buat transaksi baru (misalnya saat kasir input penjualan).  
    🔑 _Akses_: Cashier, Admin
 
@@ -152,6 +152,6 @@ Gunakan checklist `[ ]` → `[✅]` untuk menandai endpoint yang sudah selesai d
    Laporan penjualan (total per hari/bulan).  
    🔑 _Akses_: Admin, Manager
 
-- [✅] **GET** `/reports/products/top`  
+- [✅] **GET** `/reports/products/top`    
    Produk terlaris.  
    🔑 _Akses_: Admin, Manager
