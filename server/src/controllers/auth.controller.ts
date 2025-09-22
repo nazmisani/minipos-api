@@ -33,9 +33,9 @@ class AuthController {
       const token = signToken(payload);
 
       res.cookie("token", token, {
-        httpOnly: true, // gak bisa diakses JS → lebih aman
-        secure: process.env.NODE_ENV === "production", // kalau production, pakai HTTPS
-        sameSite: "strict", // cegah CSRF
+        httpOnly: false, // gak bisa diakses JS → lebih aman
+        secure: false, // kalau production, pakai HTTPS
+        sameSite: "lax", // cegah CSRF
         maxAge: 24 * 60 * 60 * 1000, // 1 hari
       });
 
