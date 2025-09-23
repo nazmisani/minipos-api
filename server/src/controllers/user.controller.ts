@@ -164,6 +164,28 @@ class UserController {
     }
   }
 
+  static async getTotalUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const totalUsers = await prisma.user.count();
+      const usersByRole = await prisma.user.groupBy({
+        by: ["role"],
+        _count: {
+          role: true,
+        },
+      });
+
+      res.status(200).json({
+        message: "User statistics retrieved successfully",
+        data: {
+          totalUsers,
+          usersByRole,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
