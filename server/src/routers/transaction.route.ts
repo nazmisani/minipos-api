@@ -11,6 +11,12 @@ router.get(
   authorizeRole("admin", "manager"),
   TransactionController.getTransactions
 );
+router.get(
+  "/today",
+  authentication,
+  authorizeRole("admin", "manager", "cashier"),
+  TransactionController.getTodaysTransactions
+);
 router.post(
   "/",
   authentication,
