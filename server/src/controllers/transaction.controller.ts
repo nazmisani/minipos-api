@@ -79,6 +79,20 @@ class TransactionController {
         };
       }
 
+      // Validate customer if provided
+      if (customerId) {
+        const customer = await prisma.customer.findUnique({
+          where: { id: parseInt(customerId) },
+        });
+
+        if (!customer) {
+          throw {
+            name: "NotFound",
+            message: "Customer not found",
+          };
+        }
+      }
+
       let totalAmount = 0;
       const processedDetails: any[] = [];
 
