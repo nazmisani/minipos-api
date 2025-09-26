@@ -48,6 +48,22 @@ class AuthController {
     }
   }
 
+  static async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      res.clearCookie("token", {
+        httpOnly: false,
+        secure: false, // di production ubah ke true + pakai HTTPS
+        sameSite: "lax",
+        path: "/",
+      });
+
+      res.status(200).json({ message: "Logout success" });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
   static async getProfile(req: Request, res: Response, next: NextFunction) {
     try {
       res.status(200).json({

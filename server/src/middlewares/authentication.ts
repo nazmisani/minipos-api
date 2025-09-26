@@ -12,9 +12,12 @@ const authentication = async (
   try {
     const { authorization } = req.headers;
 
-    if (!authorization) throw { name: "Unauthorized" };
+    let token = authorization?.split(" ")[1];
+    if (!token) {
+      token = req.cookies?.token;
+    }
 
-    const token = authorization.split(" ")[1];
+    if (!token) throw { name: "Unauthorized" };
 
     const payload = verifyToken(token);
 
