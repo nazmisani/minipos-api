@@ -7,21 +7,6 @@ class CategoryController {
   static async getCategory(req: Request, res: Response, next: NextFunction) {
     try {
       const categories = await prisma.category.findMany({
-        include: {
-          products: {
-            select: {
-              id: true,
-              name: true,
-              price: true,
-              stock: true,
-            },
-          },
-          _count: {
-            select: {
-              products: true,
-            },
-          },
-        },
         orderBy: {
           name: "asc",
         },

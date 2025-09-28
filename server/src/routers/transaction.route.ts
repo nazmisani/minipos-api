@@ -8,7 +8,7 @@ const router = express.Router();
 router.get(
   "/",
   authentication,
-  authorizeRole("admin", "manager"),
+  authorizeRole("admin", "manager", "cashier"),
   TransactionController.getTransactions
 );
 router.get(

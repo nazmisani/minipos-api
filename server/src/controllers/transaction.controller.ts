@@ -45,12 +45,10 @@ class TransactionController {
 
       const formattedTransactions = transactions.map((transaction) => ({
         ...transaction,
-        createdAt: transaction.createdAt.toLocaleDateString("id-ID", {
+        createdAt: transaction.createdAt.toLocaleDateString("en-EN", {
           day: "2-digit",
           month: "long",
           year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
         }),
       }));
 
