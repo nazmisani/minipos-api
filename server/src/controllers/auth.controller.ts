@@ -28,6 +28,7 @@ class AuthController {
         id: user.id,
         email: user.email,
         name: user.name,
+        role: user.role,
       };
 
       const token = signToken(payload);
@@ -41,9 +42,9 @@ class AuthController {
 
       res.status(201).json({
         token: token,
+        role: user.role,
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
