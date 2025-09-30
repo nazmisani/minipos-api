@@ -83,13 +83,6 @@ class ProductController {
       const products = await prisma.product.findMany({
         include: {
           category: true,
-          createdBy: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
         },
         orderBy: {
           createdAt: "desc",
@@ -98,7 +91,7 @@ class ProductController {
 
       const formattedProducts = products.map((product) => ({
         ...product,
-        createdAt: product.createdAt.toLocaleDateString("id-ID", {
+        createdAt: product.createdAt.toLocaleDateString("en-EN", {
           day: "2-digit",
           month: "long",
           year: "numeric",
@@ -108,6 +101,60 @@ class ProductController {
       res.status(200).json({
         message: "Products retrieved successfully",
         data: formattedProducts,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getProductById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      if (!id || isNaN(Number(id))) {
+        throw { name: "BadRequest", message: "Invalid product ID" };
+      }
+
+      const product = await prisma.product.findUnique({
+        where: { id: Number(id) },
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          createdBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          _count: {
+            select: {
+              transactionDetails: true,
+            },
+          },
+        },
+      });
+
+      if (!product) {
+        throw { name: "NotFound", message: "Product not found" };
+      }
+
+      const formattedProduct = {
+        ...product,
+        createdAt: product.createdAt.toLocaleDateString("en-EN", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        }),
+      };
+
+      res.status(200).json({
+        message: "Product retrieved successfully",
+        data: formattedProduct,
       });
     } catch (error) {
       next(error);

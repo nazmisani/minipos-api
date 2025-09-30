@@ -17,6 +17,13 @@ router.get(
   ProductController.totalProduct
 );
 
+// GET /products/:id - Akses: Admin, Manager, Cashier
+router.get(
+  "/:id",
+  authorizeRole("admin", "manager", "cashier"),
+  ProductController.getProductById
+);
+
 // POST /products - Akses: Admin, Manager
 router.post(
   "/",
