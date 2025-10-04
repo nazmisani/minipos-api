@@ -80,14 +80,49 @@ class ProductController {
 
   static async getProduct(req: Request, res: Response, next: NextFunction) {
     try {
-      const products = await prisma.product.findMany({
-        include: {
-          category: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
+      const {
+        page = 1,
+        limit = 10,
+        category,
+        sortBy = "createdAt",
+        sortOrder = "desc",
+      } = req.query;
+
+      // Validate and parse pagination parameters
+      const pageNumber = Math.max(1, parseInt(String(page)));
+      const limitNumber = Math.min(50, Math.max(1, parseInt(String(limit)))); // Max 50 items per page
+      const skip = (pageNumber - 1) * limitNumber;
+
+      // Build where conditions
+      const whereConditions: any = {};
+      if (category) {
+        whereConditions.categoryId = parseInt(String(category));
+      }
+
+      // Validate sortBy parameter
+      const validSortFields = ["createdAt", "name", "price", "stock"];
+      const sortField = validSortFields.includes(String(sortBy))
+        ? String(sortBy)
+        : "createdAt";
+      const sortDirection = sortOrder === "asc" ? "asc" : "desc";
+
+      // Execute queries in parallel for better performance
+      const [products, totalCount] = await Promise.all([
+        prisma.product.findMany({
+          where: whereConditions,
+          include: {
+            category: true,
+          },
+          orderBy: {
+            [sortField]: sortDirection,
+          },
+          take: limitNumber,
+          skip: skip,
+        }),
+        prisma.product.count({
+          where: whereConditions,
+        }),
+      ]);
 
       const formattedProducts = products.map((product) => ({
         ...product,
@@ -96,11 +131,29 @@ class ProductController {
           month: "long",
           year: "numeric",
         }),
+        inStock: product.stock > 0,
       }));
+
+      // Calculate pagination metadata
+      const totalPages = Math.ceil(totalCount / limitNumber);
+      const hasNextPage = pageNumber < totalPages;
+      const hasPrevPage = pageNumber > 1;
 
       res.status(200).json({
         message: "Products retrieved successfully",
         data: formattedProducts,
+        pagination: {
+          currentPage: pageNumber,
+          totalPages,
+          totalCount,
+          hasNextPage,
+          hasPrevPage,
+          limit: limitNumber,
+          showing: `${skip + 1}-${Math.min(
+            skip + limitNumber,
+            totalCount
+          )} of ${totalCount}`,
+        },
       });
     } catch (error) {
       next(error);
@@ -323,6 +376,159 @@ class ProductController {
     } catch (error) {
       console.log(error);
 
+      next(error);
+    }
+  }
+
+  static async searchProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {
+        q, // search query
+        category, // category filter
+        minPrice,
+        maxPrice,
+        inStock, // boolean - only products with stock > 0
+        limit = 20,
+        page = 1,
+      } = req.query;
+
+      // Build where conditions
+      const whereConditions: any = {};
+
+      // Search by product name (case insensitive)
+      if (q) {
+        whereConditions.name = {
+          contains: String(q),
+          mode: "insensitive",
+        };
+      }
+
+      // Filter by category
+      if (category) {
+        whereConditions.categoryId = parseInt(String(category));
+      }
+
+      // Price range filter
+      if (minPrice || maxPrice) {
+        whereConditions.price = {};
+        if (minPrice) whereConditions.price.gte = parseInt(String(minPrice));
+        if (maxPrice) whereConditions.price.lte = parseInt(String(maxPrice));
+      }
+
+      // Only products in stock
+      if (inStock === "true") {
+        whereConditions.stock = { gt: 0 };
+      }
+
+      // Calculate pagination
+      const take = parseInt(String(limit));
+      const skip = (parseInt(String(page)) - 1) * take;
+
+      // Execute search with count for pagination
+      const [products, totalCount] = await Promise.all([
+        prisma.product.findMany({
+          where: whereConditions,
+          include: {
+            category: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+          orderBy: [
+            { stock: "desc" }, // Products in stock first
+            { name: "asc" }, // Then alphabetically
+          ],
+          take,
+          skip,
+        }),
+        prisma.product.count({
+          where: whereConditions,
+        }),
+      ]);
+
+      // Format response
+      const formattedProducts = products.map((product) => ({
+        ...product,
+        createdAt: product.createdAt.toLocaleDateString("en-EN", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        }),
+        inStock: product.stock > 0,
+      }));
+
+      // Pagination info
+      const totalPages = Math.ceil(totalCount / take);
+      const currentPage = parseInt(String(page));
+      const hasNextPage = currentPage < totalPages;
+      const hasPrevPage = currentPage > 1;
+
+      res.status(200).json({
+        message: "Product search completed successfully",
+        data: formattedProducts,
+        pagination: {
+          currentPage: parseInt(String(page)),
+          totalPages,
+          totalCount,
+          hasNextPage,
+          hasPrevPage,
+          limit: take,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getAllProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { category, inStock } = req.query;
+
+      // Build where conditions
+      const whereConditions: any = {};
+
+      if (category) {
+        whereConditions.categoryId = parseInt(String(category));
+      }
+
+      if (inStock === "true") {
+        whereConditions.stock = { gt: 0 };
+      }
+
+      const products = await prisma.product.findMany({
+        where: whereConditions,
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          stock: true,
+          categoryId: true,
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+        orderBy: [
+          { stock: "desc" }, // Products in stock first
+          { name: "asc" }, // Then alphabetically
+        ],
+      });
+
+      const formattedProducts = products.map((product) => ({
+        ...product,
+        inStock: product.stock > 0,
+      }));
+
+      res.status(200).json({
+        message: "All products retrieved successfully",
+        data: formattedProducts,
+        count: products.length,
+      });
+    } catch (error) {
       next(error);
     }
   }

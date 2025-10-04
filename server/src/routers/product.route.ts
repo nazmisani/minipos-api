@@ -17,6 +17,20 @@ router.get(
   ProductController.totalProduct
 );
 
+// GET /products/search - Akses: Admin, Manager, Cashier
+router.get(
+  "/search",
+  authorizeRole("admin", "manager", "cashier"),
+  ProductController.searchProducts
+);
+
+// GET /products/all - Akses: Admin, Manager, Cashier (untuk dropdown/POS)
+router.get(
+  "/all",
+  authorizeRole("admin", "manager", "cashier"),
+  ProductController.getAllProducts
+);
+
 // GET /products/:id - Akses: Admin, Manager, Cashier
 router.get(
   "/:id",
