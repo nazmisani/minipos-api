@@ -1,9 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { comparePassword } from "../helpers/bcrypt";
 import { signToken } from "../helpers/jwt";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/db";
 
 class AuthController {
   static async login(req: Request, res: Response, next: NextFunction) {

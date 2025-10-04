@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../src/helpers/bcrypt";
-const prisma = new PrismaClient();
+import { prisma } from "../src/lib/db";
 
 async function main() {
   // Hash passwords

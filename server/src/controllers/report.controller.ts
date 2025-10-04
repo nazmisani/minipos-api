@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import dayjs from "dayjs";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/db";
 
 class ReportController {
   static async salesReport(req: Request, res: Response, next: NextFunction) {

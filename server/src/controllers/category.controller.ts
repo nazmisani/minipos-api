@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/db";
 
 class CategoryController {
   static async getCategory(req: Request, res: Response, next: NextFunction) {

@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { hashPassword } from "../helpers/bcrypt";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/db";
 
 class UserController {
   static async createUser(req: Request, res: Response, next: NextFunction) {

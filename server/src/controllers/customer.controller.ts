@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/db";
 
 class CustomerController {
   static async getCustomer(req: Request, res: Response, next: NextFunction) {
