@@ -9,43 +9,46 @@ class ReportController {
     try {
       const { start, end, group = "day" } = req.query;
 
-      const transactions = await prisma.transaction.findMany({
-        where: {
-          createdAt: {
-            gte: start ? new Date(String(start)) : undefined,
-            lte: end ? new Date(String(end)) : undefined,
-          },
-        },
-        select: {
-          createdAt: true,
-          total: true,
-        },
-      });
+      // ✅ OPTIMIZED: Database-level aggregation instead of JavaScript grouping
+      let dateFormat = "YYYY-MM-DD";
+      let sqlDateFormat = "YYYY-MM-DD";
 
-      const grouped: Record<
-        string,
-        { totalSales: number; totalTransactions: number }
-      > = {};
+      if (group === "month") {
+        dateFormat = "YYYY-MM";
+        sqlDateFormat = "YYYY-MM";
+      }
 
-      transactions.forEach((t) => {
-        const dateKey =
-          group === "month"
-            ? dayjs(t.createdAt).format("YYYY-MM")
-            : dayjs(t.createdAt).format("YYYY-MM-DD");
+      const whereClause = [];
+      const params: any[] = [];
 
-        if (!grouped[dateKey]) {
-          grouped[dateKey] = { totalSales: 0, totalTransactions: 0 };
-        }
-        grouped[dateKey].totalSales += t.total;
-        grouped[dateKey].totalTransactions += 1;
-      });
+      if (start) {
+        whereClause.push(`"createdAt" >= $${params.length + 1}`);
+        params.push(new Date(String(start)));
+      }
 
-      const result = Object.entries(grouped).map(([date, data]) => ({
-        date,
-        ...data,
-      }));
+      if (end) {
+        whereClause.push(`"createdAt" <= $${params.length + 1}`);
+        params.push(new Date(String(end)));
+      }
 
-      res.json({ message: "success", data: result });
+      const whereString =
+        whereClause.length > 0 ? `WHERE ${whereClause.join(" AND ")}` : "";
+
+      const salesData = await prisma.$queryRawUnsafe(
+        `
+        SELECT 
+          TO_CHAR("createdAt", '${sqlDateFormat}') as date,
+          SUM(total)::int as "totalSales",
+          COUNT(*)::int as "totalTransactions"
+        FROM "Transaction"
+        ${whereString}
+        GROUP BY TO_CHAR("createdAt", '${sqlDateFormat}')
+        ORDER BY date ASC
+      `,
+        ...params
+      );
+
+      res.json({ message: "success", data: salesData });
     } catch (error) {
       next(error);
     }
@@ -55,24 +58,23 @@ class ReportController {
     try {
       const { limit = 10 } = req.query;
 
-      const result = await prisma.transactionDetail.groupBy({
-        by: ["productId"],
-        _sum: { quantity: true, subTotal: true },
-        orderBy: { _sum: { quantity: "desc" } },
-        take: Number(limit),
-      });
+      // ✅ OPTIMIZED: Single query with proper aggregation and join
+      const topProducts = await prisma.$queryRaw`
+        SELECT 
+          p.id,
+          p.name,
+          p.price,
+          SUM(td.quantity)::int as total_quantity,
+          SUM(td."subTotal")::int as total_revenue,
+          COUNT(td.id)::int as order_count
+        FROM "TransactionDetail" td
+        INNER JOIN "Product" p ON td."productId" = p.id
+        GROUP BY p.id, p.name, p.price
+        ORDER BY total_quantity DESC
+        LIMIT ${Number(limit)}
+      `;
 
-      const products = await prisma.product.findMany({
-        where: { id: { in: result.map((r) => r.productId) } },
-        select: { id: true, name: true, price: true },
-      });
-
-      const data = result.map((r) => ({
-        ...r,
-        product: products.find((p) => p.id === r.productId),
-      }));
-
-      res.json({ message: "success", data });
+      res.json({ message: "success", data: topProducts });
     } catch (error) {
       next(error);
     }

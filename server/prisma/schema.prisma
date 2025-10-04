@@ -43,6 +43,10 @@ model Product {
   transactionDetails  TransactionDetail[]
   createdById         Int?
   createdBy           User?               @relation("UserCreatedProducts", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([name]) // For product search
+  @@index([categoryId]) // For filtering by category
+  @@index([createdAt]) // For sorting/filtering by date
 }
 
 model Customer {
@@ -50,6 +54,9 @@ model Customer {
   name        String
   phone       String?
   transactions Transaction[]
+
+  @@index([phone]) // For customer lookup by phone
+  @@index([name]) // For customer search by name
 }
 
 
@@ -62,6 +69,10 @@ model Transaction {
   user        User              @relation(fields: [userId], references: [id])
   customer    Customer?         @relation(fields: [customerId], references: [id])
   details     TransactionDetail[]
+
+  @@index([createdAt]) // Critical for reports & date filtering
+  @@index([userId]) // For user transaction history
+  @@index([customerId]) // For customer transaction history
 }
 
 model TransactionDetail {
@@ -72,6 +83,9 @@ model TransactionDetail {
   productId     Int
   transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
   product       Product     @relation(fields: [productId], references: [id])
+
+  @@index([productId]) // For top products aggregation
+  @@index([transactionId]) // For transaction details lookup
 }
 
 model Log {
@@ -81,4 +95,8 @@ model Log {
   createdAt DateTime @default(now())
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
+
+  @@index([createdAt]) // For log filtering & sorting
+  @@index([userId]) // For user activity tracking
+  @@index([action]) // For filtering by action type
 }

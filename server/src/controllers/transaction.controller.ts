@@ -91,19 +91,33 @@ class TransactionController {
         }
       }
 
-      let totalAmount = 0;
-      const processedDetails: any[] = [];
+      // ✅ OPTIMIZED: Fetch all products at once instead of N+1 queries
+      const productIds = details.map((detail) => parseInt(detail.productId));
 
+      // Validate all product IDs first
       for (const detail of details) {
         const { productId, quantity } = detail;
-
         if (!productId || !quantity || quantity <= 0) {
           throw { name: "BadRequest", message: "Invalid product or quantity" };
         }
+      }
 
-        const product = await prisma.product.findUnique({
-          where: { id: parseInt(productId) },
-        });
+      // Single query to fetch all required products
+      const products = await prisma.product.findMany({
+        where: { id: { in: productIds } },
+        select: { id: true, name: true, price: true, stock: true },
+      });
+
+      // Create product map for O(1) lookup
+      const productMap = new Map(products.map((p) => [p.id, p]));
+
+      let totalAmount = 0;
+      const processedDetails: any[] = [];
+
+      // Process details with products from map
+      for (const detail of details) {
+        const { productId, quantity } = detail;
+        const product = productMap.get(parseInt(productId));
 
         if (!product) {
           throw {

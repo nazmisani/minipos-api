@@ -6,40 +6,46 @@ const prisma = new PrismaClient();
 class CustomerController {
   static async getCustomer(req: Request, res: Response, next: NextFunction) {
     try {
-      const customers = await prisma.customer.findMany({
-        include: {
-          transactions: {
-            select: {
-              id: true,
-              total: true,
-              createdAt: true,
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 5,
-          },
-          _count: {
-            select: {
-              transactions: true,
-            },
-          },
-        },
-        orderBy: {
-          name: "asc",
-        },
-      });
+      // ✅ OPTIMIZED: Use raw query for better performance with date formatting
+      const customers = await prisma.$queryRaw`
+        SELECT 
+          c.id,
+          c.name,
+          c.phone,
+          (
+            SELECT COUNT(*)::int 
+            FROM "Transaction" t 
+            WHERE t."customerId" = c.id
+          ) as transaction_count,
+          (
+            SELECT JSON_AGG(
+              JSON_BUILD_OBJECT(
+                'id', t.id,
+                'total', t.total,
+                'createdAt', TO_CHAR(t."createdAt", 'DD Month YYYY')
+              ) ORDER BY t."createdAt" DESC
+            )
+            FROM (
+              SELECT t.id, t.total, t."createdAt"
+              FROM "Transaction" t 
+              WHERE t."customerId" = c.id 
+              ORDER BY t."createdAt" DESC 
+              LIMIT 5
+            ) t
+          ) as recent_transactions
+        FROM "Customer" c
+        ORDER BY c.name ASC
+      `;
 
-      const formattedCustomers = customers.map((customer) => ({
-        ...customer,
-        transactions: customer.transactions.map((transaction) => ({
-          ...transaction,
-          createdAt: transaction.createdAt.toLocaleDateString("id-ID", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          }),
-        })),
+      // Format the response to match expected structure
+      const formattedCustomers = (customers as any[]).map((customer) => ({
+        id: customer.id,
+        name: customer.name,
+        phone: customer.phone,
+        _count: {
+          transactions: customer.transaction_count,
+        },
+        transactions: customer.recent_transactions || [],
       }));
 
       res.status(200).json({
