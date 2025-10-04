@@ -2,6 +2,7 @@ import express from "express";
 import TransactionController from "../controllers/transaction.controller";
 import authentication from "../middlewares/authentication";
 import { authorizeRole } from "../middlewares/authorization";
+import { transactionLimiter } from "../middlewares/rateLimiter";
 
 const router = express.Router();
 
@@ -21,6 +22,7 @@ router.post(
   "/",
   authentication,
   authorizeRole("admin", "cashier"),
+  transactionLimiter,
   TransactionController.createTransaction
 );
 router.get(

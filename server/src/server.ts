@@ -1,6 +1,7 @@
 import router from "./routers/index.route";
 import express from "express";
 import cookieParser from "cookie-parser";
+import { generalLimiter } from "./middlewares/rateLimiter";
 
 const app = express();
 const port = process.env.PORT;
@@ -12,6 +13,9 @@ app.use(
     credentials: true,
   })
 );
+
+// Apply general rate limiting to all routes
+app.use(generalLimiter);
 
 app.use(cookieParser());
 app.use(express.json());
