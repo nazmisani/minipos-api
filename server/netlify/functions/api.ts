@@ -48,8 +48,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Use existing routes
-app.use("/.netlify/functions/api", router);
+// Use existing routes - remove the prefix since Netlify handles it
+app.use("/", router);
 
 // Create serverless handler
 const serverlessHandler = serverless(app);
