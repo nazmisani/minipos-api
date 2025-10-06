@@ -31,15 +31,15 @@ class AuthController {
 
       const token = signToken(payload);
 
-      // Detect production environment with debug
-      const isProduction =
-        process.env.NODE_ENV === "production" || process.env.NETLIFY === "true";
+      // FORCE PRODUCTION MODE untuk fix cross-domain cookies
+      const isProduction = true; // Always true for Netlify deployment
 
       // Debug logging
-      console.log("🔍 Environment Debug:", {
+      console.log("🔍 Environment Debug (FORCED):", {
         NODE_ENV: process.env.NODE_ENV,
         NETLIFY: process.env.NETLIFY,
         isProduction: isProduction,
+        cookieSettings: "sameSite: none, secure: true"
       });
 
       res.cookie("token", token, {
@@ -61,8 +61,7 @@ class AuthController {
 
   static async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      const isProduction =
-        process.env.NODE_ENV === "production" || process.env.NETLIFY === "true";
+      const isProduction = true; // Force production mode
 
       res.clearCookie("token", {
         httpOnly: false,
