@@ -31,9 +31,16 @@ class AuthController {
 
       const token = signToken(payload);
 
-      // Detect production environment
+      // Detect production environment with debug
       const isProduction =
         process.env.NODE_ENV === "production" || process.env.NETLIFY === "true";
+      
+      // Debug logging
+      console.log("🔍 Environment Debug:", {
+        NODE_ENV: process.env.NODE_ENV,
+        NETLIFY: process.env.NETLIFY,
+        isProduction: isProduction
+      });
 
       res.cookie("token", token, {
         httpOnly: false, // Allow JS access for cross-domain
