@@ -39,7 +39,7 @@ class AuthController {
         NODE_ENV: process.env.NODE_ENV,
         NETLIFY: process.env.NETLIFY,
         isProduction: isProduction,
-        cookieSettings: "sameSite: none, secure: true"
+        cookieSettings: "sameSite: none, secure: true",
       });
 
       res.cookie("token", token, {
