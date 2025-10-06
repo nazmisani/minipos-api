@@ -4,17 +4,37 @@ import cookieParser from "cookie-parser";
 import { generalLimiter } from "./middlewares/rateLimiter";
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 let cors = require("cors");
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: function (origin: any, callback: any) {
+    if (!origin) return callback(null, true);
 
-// Apply general rate limiting to all routes
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:3001",
+
+      process.env.FRONTEND_URL,
+      process.env.ADMIN_DASHBOARD_URL,
+    ].filter(Boolean);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log("⚠️  CORS blocked origin:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+};
+
+app.use(cors(corsOptions));
+
 app.use(generalLimiter);
 
 app.use(cookieParser());
