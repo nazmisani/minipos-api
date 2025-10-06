@@ -20,7 +20,6 @@ const corsOptions = {
       "http://127.0.0.1:3001",
 
       process.env.FRONTEND_URL,
-      process.env.ADMIN_DASHBOARD_URL,
     ].filter(Boolean);
 
     if (allowedOrigins.indexOf(origin) !== -1) {
