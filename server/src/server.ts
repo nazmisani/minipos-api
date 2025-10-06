@@ -2,6 +2,8 @@ import router from "./routers/index.route";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { generalLimiter } from "./middlewares/rateLimiter";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
