@@ -34,12 +34,12 @@ class AuthController {
       // Detect production environment with debug
       const isProduction =
         process.env.NODE_ENV === "production" || process.env.NETLIFY === "true";
-      
+
       // Debug logging
       console.log("🔍 Environment Debug:", {
         NODE_ENV: process.env.NODE_ENV,
         NETLIFY: process.env.NETLIFY,
-        isProduction: isProduction
+        isProduction: isProduction,
       });
 
       res.cookie("token", token, {
