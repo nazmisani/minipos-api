@@ -31,11 +31,15 @@ class AuthController {
 
       const token = signToken(payload);
 
+      // Detect production environment
+      const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
+      
       res.cookie("token", token, {
-        httpOnly: false, // gak bisa diakses JS → lebih aman
-        secure: false, // kalau production, pakai HTTPS
-        sameSite: "lax", // cegah CSRF
-        maxAge: 24 * 60 * 60 * 1000, // 1 hari
+        httpOnly: false, // Allow JS access for cross-domain
+        secure: isProduction, // HTTPS only in production
+        sameSite: isProduction ? "none" : "lax", // 'none' for cross-domain in production
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        domain: isProduction ? undefined : undefined, // Let browser handle domain
       });
 
       res.status(201).json({
@@ -49,10 +53,12 @@ class AuthController {
 
   static async logout(req: Request, res: Response, next: NextFunction) {
     try {
+      const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
+      
       res.clearCookie("token", {
         httpOnly: false,
-        secure: false, // di production ubah ke true + pakai HTTPS
-        sameSite: "lax",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
         path: "/",
       });
 
