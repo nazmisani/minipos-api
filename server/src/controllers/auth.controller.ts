@@ -32,8 +32,9 @@ class AuthController {
       const token = signToken(payload);
 
       // Detect production environment
-      const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
-      
+      const isProduction =
+        process.env.NODE_ENV === "production" || process.env.NETLIFY === "true";
+
       res.cookie("token", token, {
         httpOnly: false, // Allow JS access for cross-domain
         secure: isProduction, // HTTPS only in production
@@ -53,8 +54,9 @@ class AuthController {
 
   static async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      const isProduction = process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
-      
+      const isProduction =
+        process.env.NODE_ENV === "production" || process.env.NETLIFY === "true";
+
       res.clearCookie("token", {
         httpOnly: false,
         secure: isProduction,
