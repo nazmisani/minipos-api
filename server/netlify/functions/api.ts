@@ -24,7 +24,7 @@ const corsOptions = {
       "http://localhost:3001",
       "http://127.0.0.1:3000",
       "http://127.0.0.1:3001",
-      process.env.FRONTEND_URL,
+      "https://minipos-five.vercel.app",
     ].filter(Boolean);
 
     if (allowedOrigins.indexOf(origin) !== -1) {
